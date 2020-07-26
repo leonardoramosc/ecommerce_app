@@ -1,0 +1,367 @@
+1.- El archivo App.js es el que contendra el componente App,
+Aca se importa react, y app.css, luego se crea el componente App
+y se exporta para ser usado en index.js
+
+2.- En el archivo index.js se importa react y react-dom. Luego se usa
+ReactDOM.render para renderizar el component App. 
+
+3.- Se crea el homepage.component.jsx que es el componente de la homepage:
+Este se hace un componente funcional porque no se necesitan lifecycle methods
+ni tampoco se necesita un state.
+
+4.- Se crea homepage.styles.scss para añadir estilos al homepage.component
+y luego se importa en el homepage.component.jsx
+
+5.- Se creo una carpeta para los components (components) para alojar componentes
+reusables y otra carpeta "Pages" para alojar componentes que no sean reusables.
+Ejemplo: la HomePage es un componente que solo se usara una vez. Se cre0
+la carpeta homepage dentro de la carpeta "pages" para alojar el HomePage Component.
+El HomePage component se creo como un componente funcional
+
+6.- Se creo una carpeta para el componente menu-item. El cual sera usado dentro
+del componente "directory-menu". A este componente funcional se le pasaran
+propiedades como titulo, subtitlo, imagen, key, size. La propiedad size,
+sera usada como clase de css para establecer el tamaño del componente. El valor 
+puede ser "large" lo cual hara que el height sea de 380px.
+
+7.- Se creo una carpeta para el componente "directory-menu". Este componente
+va a contener diversos compentes "Menu-item". Este componente es de clase
+debido a que se necesita el state para tener los datos de lo que contendra
+cada componente Menu-item, es decir, en el state del directory-menu, estara
+una propiedad llamada "sections" que contiene un array con objetos que contienen
+todas las propiedades que se le pasaran al Menu-item. Nota: recordar que en jsx
+se puede retornar un array como tal, por lo cual jsx se encargara de renderizar
+los elementos de ese array.
+
+8.- Se instalo la librearia "react-router-dom" para el routing de la app.
+Se importo en el archivo index.js el componente BrowserRouter que viene
+en la libreria "react-router-dom". Luego este componente se implemento como
+padre del componente App, debido a que BrowseRouter permite que se implemente
+toda la funcionalidad de routing en nuestra app.
+
+9.- Se importó en el archivo app.js "React-router-dom" para implementar el
+routing. NOTAS A TENER EN CUENTA:
+
+		- Route: Su funcion es renderizar el componente especificado cuando su propiedad
+		"path" tenga alguna coincidencia con el URL. Estos pueden coincidir incluso si no son exactamente
+		iguales, sin embargo, se puede exigir que solo se renderice si la coincidencia es
+		exacta si se pasa la propiedad "exact".
+
+		- Switch: Dentro de ese componente se colocan varios componentes Route, y switch
+		se encargara de renderizar el primer componente que encuentre que tenga una
+		coincidencia con el URL y el path. Es decir, cuando no se usa Switch, en la pagina
+		se renderizaran todos los componentes que coincidan con el URL a excepcion de aquellos
+		que contengan la propiedad "exact" como se menciono anteriormente.
+
+		- Al usar la propiedad "component" de Route, este le pasa a ese componente un objeto "props"
+		con las siguientes propiedades: "match", "history", "location" (consultar documentacion).
+		La propiedad match es un objeto que contiene una propiedad llamada "params", la cual
+		es un objeto que contiene los valores de los segmentos dinamicos de un URL. Ejemplo:
+		si en un componente Route especificamos el path de la siguiente manera: 
+		"topics/:id" los dos puntos quieren decir que "id" es un segmento dinamico el cual
+		puede recibir cualquier valor, por lo tanto si en nuestro navegador escribimos:
+		"topics/12" entonces el objeto "params" sera: { id: "12" }.
+
+		- Link: debido a que React permite el desarrollo de SPA's, el componente Link no renderiza
+		nuevamente toda la pagina para mostrarnos otra(a diferencia del elemento <a></a>), sino
+		que ademas de actualizar el URL, actualiza ciertas partes del DOM sin redirigirnos a otra 
+		pagina (que es lo que hace <a>). Sin embargo, este componente solo puede ser usado como una 
+		especie de boton (similar al <a>). Pero que pasa si queremos renderizar cierto contenido cuando ocurra un evento diferente a un click? - Es aqui donde se puede usar el metodo "push" de la propiedad "history"
+		de cualquier componente. Y es precisamente gracias a que esto es un metodo, que puede ser
+		usado en algun ciclo de vida de un componente. Por ejemplo: en el ciclo de vida "componentDidMount"
+		podriamos actualizar el DOM con history.push(<URL>).
+
+		- props.match.url: Este es valor de la porcion de URL que coincidio con el path. Es ideal para
+		crear Links encadenados. Por ejemplo, supongamos que tengo el siguiente Route: "/topics"
+		y adicionalmente tengo otro Route dinamico para ese mismo: "/topics/:topicID", dentro del
+		componente que sera renderizado en el Route "/topics" puedo retornar varios Links que me dirijan
+		a una pagina especifica segun el segmento dinamico que especifique. Por ejemplo, dentro del
+		componente de "/topics" puedo retornar: "<Link to={`${props.match.url}/12}>" y de esta forma
+		puedo redirigir a una pagina especifica de forma dinamica sin tener que escribir el Link nuevamente
+		explicitamente, es decir, con "props.match.url" evito tener que escribir: 
+		"<Link to="topics/12"><>" sino que el elemento Link me redirijira a cualquiera que sea el URL
+		donde este presente el componente que se especificó en el Route.
+
+		- withRouter: este es un Higher Order Component (HOC), es decir, es un componente que sirve como
+		funcion que toma como argumento otro componente y retorna ese mismo componente con una serie 
+		de modificaciones, con las cuales se puede tener acceso a la propiedad "history" y a la coincidencia 
+		de <Route> mas cernana. withRouter pasara las propiedades "match", "location", "history" al componente 
+		que envuelve cada vez que lo renderice. Por ejemplo, supongamos que tenemos un componente <Route>
+		que recibe un componente "myComponent": ( <Route component={myComponent} /> ), ya sabemos que 
+		Route se encarga de pasar las propiedades "history", "match" y "location" a este componente, pero
+		que sucede si dentro de "myComponent" residen otros componentes anidados, es decir, supongamos
+		que dentro de "myComponent" hay otro componente llamado "myNavBar" y dentro de "myNavBar"
+		hay otro componente llamado "NavItem", que pasaria si necesito usar las propiedades "history",
+		"match" y "location" en "NavItem"? ya sabemos que estas propiedades solo forman parte de
+		"myComponent" y quizas una solucion seria pasar estas propiedades a los componentes que residen
+		en "myComponent" a traves de "props", sin embargo, esto es una mala practica porque estas propiedades
+		tendrian que pasar primero por "myNavBar" para que este componente pueda pasarselas posteriormente
+		a "NavItem", PERO "myNavBar" en este caso NO necesita de estas propiedades; es aqui donde entra
+		en accion withRouter. Simplemente, dentro del archivo de "NavItem" importamos "withRouter" y 
+		una vez creado el componente "NavItem", al importarlo se lo pasamos como para parametro a
+		"withRouter": export default withRouter(NavItem). Y de esta forma, withRouter se encargara
+		de pasar las propiedades de un componente que haya sido pasado a algun <Route> a cualquier
+		otro componente que este anidado dentro del componente que se paso a <Route>.
+
+10.- Se creo dentro de App.js un <Route> de prueba para alojar la pagina de Hats, a su vez,
+se importo dentro de MenuItem.Component "withRouter" para poder tener accesso a las propiedades
+"match" y "history" que le fueron pasadas a "HomePage". Recordar que dentro de HomePage esta
+"DiretoryMenu", y dentro de DirectoryMenu estan los "MenuItem" que fueron añadidos de acuerdo
+a la data presente en el state de DirectoryMenu. withRouter se importo dentro de MenuItem
+porque queremos que al dar click en cualquier componente nos lleve a la pagina de ese elemento,
+es decir, supongamos que tenemos un MenuItem que se refiere a zapatos, queremos que al dar click
+en este componente nos renderice la pagina de zapatos (ej: "/shop/shoes"). Para hacer esto,
+se asigno en el evento "onClick" de MenuItem una funcion que hace uso de "history.push" para
+especificar el link de la pagina que queremos renderizar, usamos este metodo en combinacion
+de "match.url" para realizar esta funcionalidad de forma dinamica: history.push(${match.url}${linkUrl}) 
+y a su vez se hizo uso de la propiedad "linkUrl" que se le asigno a cada MenuItem ("linkUrl" es una 
+propiedad que se tomo del state de DirectoryMenu cuando se crearon los MenuItem).
+
+11.- Se creo el componente "ShopPage" dentro de la carpeta "pages" para renderizar esa pagina.
+Este es un componente de clase debido a que en el state se alojara la data relativa a los productos
+disponibles en la tienda. Adicionalmente, se creo el componente funcional "CollectionPreview" el cual 
+es un preview de los productos disponibles segun su tipo. Por ejemplo, para los sombreros se mostrara
+un pequeño listado de los sombreros disponibles con sus respectivas fotos.
+
+12.- En el state del componente "ShopPage" se creo una propiedad "collections" la cual es un array
+de las colecciones que hay en la tienda (sombreros, zapatos, etc) y adicionalmente, cada coleccion
+consta de un listado de productos, es decir, por ejemplo para los sombreros, hay un array (items)
+que contiene el listado completo de los sombreros. Entonces dentro de "ShopPage" hay un codigo
+que renderiza cada una de las colecciones, retornando un array de componentes "CollectionPreview".
+A los cuales se le pasaran las propiedades necesarias, incluyendo los items de cada coleccion
+que seran renderizados con un componente "CollectionItem".
+
+13.- Se creo el componente "CollectionPreview" el cual recibe como props la coleccion como tal
+y el array de items que debera renderizar. Debido a que esto es solo un preview de la ShopPage
+solamente se mostraran los primeros 4 items de cada coleccion. Dentro de "CollectionPreview"
+se renderizan esos 4 items usando el componente "CollectionItem".
+
+14.- Se creo el componente "CollectionItem" el cual recibe las props "name", "price", "imageUrl".
+Este componente es el que representa cada item de "CollectionPreview".
+
+15.- Se creo el componente "Header". Y se importo en App.js, se coloco arriba de <Switch>
+para que el Header siempre este renderizado.
+
+16.- Se creo un componente en "Pages" llamado "SignInAndSignUp" el cual es la pagina
+donde se alojara el componente "Sign-in" y el Componente "sign-up" los cuales son forms. 
+"SignInAndSignUp" se importo en App.js para ser usado en un <Route /> con path: "/signin".
+NOTA: El state NO estara presente en "SignInAndSignUp", sino que tanto "SignIn" como 
+"SignUp" tendran su propio state, esto es debido a que el state de uno no afectara al otro,
+es por esto que no se coloca en "SignInAndSignUp" porque en este caso, SignIn y SignUp
+no comparten el mismo state.
+
+17.- Se creo el componente "SignIn". Se establecio como componente de clase, debido
+a que este necesitara un state para guardar el valor del email y el password de las inputs
+del form. NOTA IMPORTANTE: si a algun input se le asigna la propiead "value", siempre deben 
+tener la propiedad onChange especificada, es por esto que se creo el metodo "handleChange" 
+en este componente, el cual actualizala propiedades del state dinamicamente.
+
+18.- Se creo el componente "FormInput" el cual recibira una propiedad llamada handleChange
+la cual debe ser una funcion que se ejecutara en el evento "onChange" de su input. Posteriormente
+este componente fue añadido dentro del formulario del SignIn component.
+
+19.- Se creo el componente "CustomButton" que sirve para crear botones personalizados, los
+cuales reciben la propiedad type y children la cual representa el valor de cualquier contenido
+que este envuelto en el CusttomButton: <CustomButton> CHILDREN  </ CustomButton>
+
+/**********************************************************************************************************
+************************************************* FIREBASE ************************************************
+
+1.- Se instalo la libreria de firebase.
+
+2.- Se creo una carpeta dentro de "Src" llamada "firebase", dentro de "firebase" se creo
+un archivo "firebase.utils.js". En este archivo es donde se importo firebase de 'firebase/app', 
+adicionalmente se importo: 'firebase/auth', 'firebase/firestore'. Adicionalmente:
+	- Se creo un objeto "config" que contiene los datos proporcionados por firebase para conectar 
+		con el backend.
+	-	Se inicializo la app de firebase con el comando: firebase.initializeApp(config), este
+		metodo recibe como argumento la configuracion proporcionada por firebase la cual asignamos
+		al objeto "config". 
+	- (a pesar de que todavia no lo necesitamos) se exporto firebase.auth()
+		y firebase.firestore().
+	- Se creo una instancia de firebase.auth.GoogleAuthProvider para poder iniciar sesion
+		con Google y se le asigno a una variable llamada "provider", esto quiere decir que ahora
+		"provider" es el servicio de Google con el que podemos iniciar sesion, si quisiera iniciar
+		sesion con facebook por ejemplo, debo entonces crear otro provider.
+	- En el objeto provider, se uso el metodo setCustomParameters y se le paso como parametro
+		un objeto con las siguientes propiedades: { prompt: 'select_account' }. Este metodo sirve
+		para pasar los parametros que requiere la API de Google OAuth 2.0 para poder solicitar
+		que se despliegue el PopUp de Google; en este caso, el parametro que se paso a la API
+		de Google fue "propmt" el cual sirve para especificar si el servidor de autorizacion
+		debe pedirle al usuario reautenticacion y consetimiento; y el valor de este parametro
+		es "select_account" en el cual, el servidor de autorizacion le pide al usuario seleccionar
+		una cuenta, esto permite al usuario que tenga multiples cuentas en el servidor de autoriacion
+		la opcion de seleccionar entre las multiples cuentas donde el usuario pueda tener la sesion
+		iniciada.
+	- Se exporto una funcion llamada signInWithGoogle (creada por mi), la cual retorna el resultado
+		de la promesa de auth.signInWithPopup(), esta promesa se encarga del proceso de autenticacion
+		por medio de un PopUp y recibe como parametro un objeto provider, adicionalmente si la promesa
+		es exitosa, retorna un usuario autenticado con las credenciales que proporciona el provider.
+	- Se configuro firebase (desde el sitio web) para permitir a los usuarios iniciar sesion con 
+		Google. Para esto, hay que dirigirse a "Authentication - Sign-in-method" y habilitar el icono
+		de Google.
+
+3.- Se importo en el archivo "sign-in.component.jsx" la funcion "SignInWithGoogle" del archivo
+"firebase.utils".
+
+4.- Se creo dentro del SignIn component un nuevo CustomButton el cual es el encargado de
+iniciar sesion con google y se le pasó la funcion SignInWithGoogle en el evento "onClick"
+para que se dispare el PopUp donde el usuario podra seleccionar la cuenta con la cuenta de
+Google con la que iniciara sesion.
+
+5.- Se importó "auth" desde "firebase.utils" dentro de "App.js".
+
+6.- Se convirtió el componente "App" a un componente de clase, debido a que necesito un state
+que contenga el usuario que está logeado. Por esto, se creo el state de "App" y se le asigno 
+la propiedad "currentUser" con un valor "null", lo hago de esta manera porque "auth" tiene
+una propiedad que tambien se llama "currentUser" en la cual si no hay usuario logeado, su valor
+es "null", entonces de esta forma, esa parte del state es similar a "auth". Se creo este
+state porque probablemente otros componentes dentro de "App" tambien necesiten informacion
+sobre el estado de login de algun usuario. Adicionalmente:
+	- Se agrego el lifecycle componentDidMount (el cual es un evento que se dispara 
+		cada vez que se renderiza el componente) para que cuando ocurra este evento se verifique
+		si un usuario cerro o inicio sesion, esto se hace con el metodo "onAuthStateChange" que
+		forma parte de "auth" (auth.onAuthStateChange), este metodo es un observador que se 
+		dispara cada vez que un usuario inicia o cierra sesion, es decir, la logica de este codigo
+		es que cada vez que el componente es renderizado se agrega una especie de listener
+		que esta atento a ver si algun usuario inició o cerró sesion; adicionalmente, este metodo
+		recibe un callback al que se le da como parametro un objeto el cual es el usuario, por 
+		lo tanto en este caso, nuestro callback se encarga de actualizar el state de App
+		actualizando la propiedad "currentUser" al usuario que se recibio como resultado
+		del evento "onAuthStateChange". Por último, este evento retorna firebase.Unsubscribe,
+		el cual es una funcion que cuando la llamamos detiene el observador, permitiendo
+		de esta forma, ahorrar memoria eliminando el observador cuando no sea necesario.
+
+	- Se agrego una propiedad a la clase "App" llamada "unsubscribeFromAuth" a la que se
+		le dio el valor de "null", sin embargo, dentro de "componentDidMount", la funcion
+		que retornaba "auth.onAuthStateChanged" se le asigno como valor a "unsubscribeFromAuth",
+		de esta forma, como ahora "unsubscribeFromAuth" es una funcion que se encarga de
+		detener el observador "auth.onAuthStateChange", la llamaramos en el lifecycle
+		"componentWillUnmount" el cual es un ciclo que ocurre cuando React detecta que el
+		componente por algun motivo sera eliminado del DOM. Por lo tanto, cada vez que 
+		el componente vaya a ser eliminado del DOM, el observador "auth.onAuthStateChange"
+		ya no seguira cumpliendo su funcion y por lo tanto no seguira usando recursos
+		innecesariamente.
+
+		NOTAS:
+		- Firebase se encarga de toda la logica encargada de la persistencia de informacion,
+			es decir, cuando por ejemplo actualizamos la pagina, lo logico seria que se cerrara
+			la sesion de un usuario (en caso de que la tenga iniciado), pero firebase se encarga
+			de que esto no ocurra porque el metodo "onAuthStateChange" unicamente se dispara
+			cuando el usuario cierra o inicia sesion sin importar si se recarga la pagina,por
+			lo tanto, nosotros solo debemos preocuparnos en especificar cuando se inicializara
+			este observador.
+		- El usuario que se recibe en el callback de "auth.onAuthStateChange" tiene una propiedad
+			"uid" el cual es el id unico que pertenece a cada usuario; al logearnos con Google,
+			el usuario de google tambien tiene esta propiedad.
+
+7.- En "App.js" se le paso al componente "Header" la propiedad "currentUser" cuyo valor
+es el valor de la propiedad "currentUser" del state del componente "App": {this.state.currentUser},
+Luego en "Header.component.jsx" se importó la "auth" y dentro del componente "Header" se añadio
+la siguiente logica: Si "currentUser" (propiedad reciba desde "App") es "true", es decir,
+si hay algun usuario logeado, entonces agregar una opcion con un "div" cuyo contenido sea: "SIGN OUT" 
+y que al recibir el evento "onClick" se ejecute la funcion "auth.signOut"; por el contrario,
+si no hay usuario logeado entonces mostrar una opcion que sea un "Link" que me dirija a la ruta
+"/signin" para iniciar sesion. En pocas palabras, si ya hay un usuario logeado, colocar en el 
+Header la opcion para cerrar sesion, pero si no hay usuario entonces la opcion sera para iniciar sesion.
+
+8.- Se modifico el componente "CustomButton" y en el elemento "button" se agrego una condicional
+en su "className", donde si la propiedad "isGoogleBtn" es "true" entonces agregar la clase
+"google-btn", de lo contrario, no agregarla. En pocas palabras, si el boton tiene la propiedad
+"isGoogleBtn" el boton sera estilizado de esa forma.
+
+/*************
+* Notas acerca de la Firestore
+**************
+	- Para ingresar a la base de datos de firestore (la cual es NoSql): "Database - Data".
+	- Collection: contiene documentos pero tambien puede contener otras colecciones.
+	- Cada documento tambien puede tener una coleccion.
+	- Cada documento tiene un ID y firebase normalmente genera uno automaticamente. 
+	- firestore tiene un metodo "doc" con el cual podemos hacer una query a la base de datos.
+		Este metodo nos devuelve una instancia de "DocumentReference". Tambien tiene el 
+		metodo "collection" y con este obtenemos una instancia de "CollectionReference".
+	- La diferencia entre "DocumentReference" y "CollectionReference" es que con 
+		"DocumentReference" podemos realizar operaciones CRUD.
+	- El "DocumentReference" se refiere a la ubicacion de un documento en la base de datos
+		de firestore y puede ser usado para escribir, leer o escuchar algun evento en esa
+		ubicacion. El document en esa ubicacion puede o no puede existir. Es decir, es solo
+		una referencia y no podemos acceder a la informacion como tal de ese documento, para 
+		acceder a la informacion se debe obtener una instancia de "DocumentSnapShot".
+	- Para obtener una instancia de "DocumentSnapshot", es decir, para obtener la informacion
+		de un documento en especifico, primero debemos obtener la referencia de la ubicacion
+		de ese documento, y esta referencia no es mas que una instancia de "DocumentReference",
+		entonces al obtener "DocumentReference" podemos usar el metodo "get" de este objeto
+		para obtener el "DocumentSnapshot": { documentReference.get() }. Por ejemplo, si 
+		queremos obtener la data de un documento especifico que tenga un id "12345" en una 
+		coleccion llamada "users", hariamos lo siguiente: 
+			{
+				docRef = firestore.doc("users/12345");
+				docRef.get().then( snapshot => console.log(snapshot))
+			}
+		En el codigo anterior podriamos usar una funcion asincrona y utilizar await para crear
+		una variable que guarde el resultado de "docRef.get", debido a que el metodo "get"
+		retorna una promesa que resuelve el "DocumentSnapshot".
+	- El "DocumentSnapShot" tiene una propiedad llamada "exists" la cual su valor es un 
+		booleano que especifica si el document existe o no en la base de datos.
+	- NO SE OBTIENE NINGUNA DATA DE "DocumentSnapShot" directamente, es decir, la
+		data del sanpshot se obtiene es cuando usamos su metodo "data": { snaphot.data() },
+		sin embargo, la propiedad "id" no esta presente en la data pero si esta presente
+		en el documento sanpshot como tal.
+
+9.- Se creo una funcion dentro de "firebase.utils.js" la cual recibira como parametro
+principal el usuario que devuelve el callback de "auth.onAuthStateChange" (userAuth). Esta funcion
+se llama: "createUserProfileDocument" y se encargara de crear un nuevo usuario dentro
+de la base de datos en caso de que no exista. Para esto, se realizo lo siguiente:
+	- La funcion se creo como asincrona debido a que debe hacer una peticion a la API
+		de firebase de la base de datos. 
+	- Se hace una consulta para obtener el "DocumentReference" usando la coleccion de "users"
+		y especificando como documento el "uid" (id) del "userAuth" (usuario que se recibio como
+		parametro).
+	- Una vez obtenido el "documentReference" se procede a obtener el "snapshot" para verificar
+		si el documento existe en la base de datos, es decir, verificar si el usuario existe.
+	- Si el usuario no existe (usando la propiedad de "exist" del snapshot) entonces, obtener
+		las propiedades "displayName" y "email" de "userAuth" para crear el usuario en la base de
+		datos.
+	- Se obtiene la fecha actual para guardarla en el nuevo documento (nuevo usuario).
+	- Se crea el nuevo usuario usando el metodo "set" del "documentReference" que se 
+		obtuvo anteriormente.
+	- Al final esta funcion retorna el "documentReference".
+
+10.- Se realizó las siguientes modificaciones en el archivo "App.js" dentro del metodo
+"componentDidMount", dentro del callback de "auth.onAuthStateChanged":
+	- Si hay usuario logeado, entonces llamar la funcion "createUserProfileDocument" del
+		archivo "firebase.utils.js" y pasrle como argumento el usuario y guardar el valor
+		retornado por esa funcion en una variable llamada "userRef" (recordar que esta
+		funcion retorna un "DocumentReference" del usuario que se le paso).
+	- Se uso el metodo "onSnapShot" de "userRef". Este metodo es un listener que se dispara
+		cuando se detecta una modificacion dentro de ese "documentReference" o incluso
+		cuando se crea una instancia de "DocumentSnapshot". "onSnapShot" recibe como parametro
+		un callback el cual recibe como parametro el "DocumentSnapshot". Por lo tanto, 
+		cuando ocurra alguno de estos dos eventos (modificacion del document o creacion de instancia
+		de documentSnapshot), se actualizara el valor de "currentUser" del state de "App" usando
+		el metodo "setState".  
+	- Si "userAuth" es null (es decir, si el usuario no esta logeado) entonces el "currentUser"
+		del state de "App" sera igual al "userAuth", es decir, sera igual a null.
+
+11.- Se creo el componente "SignUp", donde se realizo lo siguiente:
+	- Se importo "FormInput" y "CustomButton".
+	- Se importo "auth" y "createUserProfileDocument".
+	- Se creo el componente "SignUp" como un componente de clase para guardar en el state
+		lo que el usuario coloque en los inputs.
+	- Se creo una funcion "handleSubmit" para llamarla cuando ocurra el evento "submit" en el
+		"form". esta funcion extraera las propiedades del state y verificara si las contraseñas
+		coinciden.
+	- Luego se llama la funcion "auth.createUserWithEmailAndPassword" para crear un usuario
+		y luego se obtiene la propiedad "user" del resultado de esta funcion.
+	- Luego se ejecuta la funcion "createUserProfileDocument" y se le pasa como parmetro el
+		"user" y un parametro adicional "displayName" para que esta funcion se encargue de 
+		crear el usuario.
+	- Luego limpiamos el formulario usando "setState".
+	- Luego se creo la funcion "handleChange" la cual se uso en el evento "onChange" de los
+		"FormInput". Esta funcion actualiza el state (setState) depiendo del input que se modifique.
+
+12.- Se importo el componente "SignUp" dentro del componente "SignInAndSignUpPage".
+
+13.- Se habilito en la pagina de firebase la opcion de iniciar sesion con email y password.
+
+
