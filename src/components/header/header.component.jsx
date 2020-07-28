@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import './header.styles.scss';
 
@@ -30,4 +31,10 @@ const Header = ({currentUser}) => (
 
 )
 
-export default Header;
+const mapStateToProps = state => ({
+  /*Recordar que state sera el rootReducer y el rootReducer tiene una propiedad
+    llamada "user" que apunta al userReducer el cual es el que contiene currentUser  */
+  currentUser: state.user.currentUser
+})
+
+export default connect(mapStateToProps)(Header);

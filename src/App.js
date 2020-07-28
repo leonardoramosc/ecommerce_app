@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import './App.css';
 
@@ -10,15 +11,10 @@ import Header from './components/header/header.component.jsx';
 
 import { auth, createUserProfileDocument } from './firebase/firebase.utils.js';
 
+import {setCurrentUser} from './redux/user/user.actions';
+
 
 class App extends React.Component {
-  constructor(){
-    super();
-
-    this.state = {
-      currentUser: null
-    }
-  }
 
   unsubscribeFromAuth = null;
 
@@ -36,7 +32,7 @@ class App extends React.Component {
         el state de la app.
       */
       if(userAuth){
-        const userRef = await createUserProfileDocument(userAuth, {from: "app.js"});
+        const userRef = await createUserProfileDocument(userAuth);
 
         /* El metodo onSnapshot es un listener que se activa cuando hay alguna actualizacion
           del documentReference en la base de datos. Sin embargo, este evento tambien
@@ -49,18 +45,14 @@ class App extends React.Component {
 
         userRef.onSnapshot(snapshot => {
 
-          this.setState({
-            currentUser: {
+          this.props.setCurrentUser({
               id: snapshot.id,
               ...snapshot.data()
-            }
-          }, () => console.log(this.state))
+            })
 
         })
       } else {
-        this.setState({
-          currentUser: userAuth
-        })
+        this.props.setCurrentUser(userAuth)
       }
     })
   }
@@ -72,7 +64,7 @@ class App extends React.Component {
   render(){
     return (
       <div >
-        <Header currentUser={this.state.currentUser}/>
+        <Header />
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/shop" component={ShopPage} />
@@ -84,4 +76,9 @@ class App extends React.Component {
 }
 
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+})
+
+
+export default connect(null, mapDispatchToProps)(App);

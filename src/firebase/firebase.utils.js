@@ -13,9 +13,8 @@ const config = {
     appId: "1:809103275390:web:a46b87bbc61b7d97462f2f"
 };
 
-// funcion para crear usuario y añadiendolo a la base de datos
+// funcion para crear usuario y añadirlo a la base de datos
 export const createUserProfileDocument = async (userAuth, aditionalUserData) => {
-	// Si no hay un usuario logeado, detener funcion
 	if( !userAuth ) return;
 	// Hacer una consulta a la firestore para verificar si el usuario existe
 		// Obtener el documentReference object para luego obtener el snapshop con la data necesaria
