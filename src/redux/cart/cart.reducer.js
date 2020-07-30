@@ -2,8 +2,7 @@ import {cartActionTypes} from './cart.type';
 
 const INITIAL_STATE = {
 	hideCart: true,
-	cartItems: {},
-	total: 0
+	cartItems: {}
 }
 
 const cartReducer = (state=INITIAL_STATE, action) => {
@@ -27,8 +26,7 @@ const cartReducer = (state=INITIAL_STATE, action) => {
 						quantity: item ? item.quantity+1 : 1,
 						total: item ? ((item.quantity+1) * price) : price
 					}
-				},
-				total: state.total + price
+				}
 			}
 		default:
 			return state;
